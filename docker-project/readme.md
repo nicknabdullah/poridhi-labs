@@ -1,4 +1,4 @@
-# Module 1 — Docker & Linux
+# Milestone 1 — Docker & Linux
 
 The goal of the project is to build and deploy a small monitoring application on a Linux server using Docker. It demonstrates Linux fundamentals, Docker containerization, Docker networking, persistent storage, and Docker Compose.
 
