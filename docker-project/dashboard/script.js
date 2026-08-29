@@ -1,5 +1,5 @@
 // Configuration
-const COLLECTOR_URL = "http://localhost:6000/status";
+const COLLECTOR_URL = "/status";
 const REFRESH_INTERVAL = 5000;
 
 // DOM Elements
