@@ -5,7 +5,7 @@ This project deploys a small monitoring application with two services:
 - **Dashboard** — serves the metrics page using NGINX
 - **Collector** — provides system metrics through a Python Flask API
 
-## Table of contents
+## Contents
 
 - [Task 1 — Linux setup](#task-1--linux-setup)
 - [Task 2 — Docker basics, image management, networking & storage](#task-2--docker-basics-image-management-networking--storage)
@@ -13,6 +13,7 @@ This project deploys a small monitoring application with two services:
 - [Task 4 — Docker compose](#task-4--docker-compose)
 - [Task 5 — Monitoring & troubleshooting](#task-5--monitoring--troubleshooting)
 - [Submission](#submission)
+- [Screenshots](#screenshots)
 - [Short questions](#short-questions)
 - [Bonus](#bonus)
 
@@ -26,13 +27,6 @@ The Linux environment was inspected using the following commands:
 | `ip addr` | ✅ Executed | Displays active network interfaces and IP address details |
 | `df -h` | ✅ Executed | Displays human-readable disk storage utilization |
 | `ls -l` | ✅ Executed | Displays file lists with permissions, ownership, and sizes |
-
-```bash
-uname -a
-ip addr
-df -h
-ls -l
-```
 
 ## Task 2 — Docker basics, image management, networking & storage
 
@@ -243,7 +237,7 @@ Browser -> dashboard:9090 -> NGINX -> collector:6000/status -> Flask JSON
 | **Docker compose file** | `compose.yaml` | ✅ Delivered | Orchestration configuration for all services |
 | **Dashboard frontend** | `dashboard/` | ✅ Delivered | Includes `Dockerfile`, `index.html`, `nginx.conf` |
 | **Collector backend** | `collector/` | ✅ Delivered | Includes `Dockerfile`, `app.py`, `requirements.txt` |
-| **Verification screenshots**| `/screenshots` | ✅ Delivered | Includes dashboard UI, compose state, images, networks, volumes |
+| **Screenshots**| `screenshots/` | ✅ Delivered | Includes dashboard UI, compose state, images, networks, volumes |
 
 ```text
 docker-project/
@@ -258,15 +252,22 @@ docker-project/
       └── requirements.txt
 ```
 
-### Screenshots
+## Screenshots
 
-Screenshots are stored in:
+**Dashboard**
+![Dashboard](screenshots/dashboard.png)
 
-```text
-/screenshots
-```
+**Docker compose ps**
+![Docker compose ps](screenshots/docker_compose_ps.png)
 
-They include the working dashboard, Compose services, Docker images, Docker network, and Docker volume.
+**Docker images**
+![Docker images](screenshots/docker_images.png) 
+
+**Docker network**
+![Docker network](screenshots/docker_network.png)
+
+**Docker volume**
+![Docker volume](screenshots/docker_volume.png)
 
 ## Short questions
 
