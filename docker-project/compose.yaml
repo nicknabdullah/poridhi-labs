@@ -1,0 +1,27 @@
+services:
+  collector:
+    build: ./collector
+    container_name: collector
+    expose:
+      - "6000"
+    networks:
+      - app-net
+    volumes:
+      - data:/data
+    restart: unless-stopped
+  dashboard:
+    build: ./dashboard
+    container_name: dashboard
+    ports:
+      - "9090:80"
+    networks:
+      - app-net
+    depends_on:
+      - collector
+    restart: unless-stopped
+
+networks:
+  app-net:
+
+volumes:
+  data:
