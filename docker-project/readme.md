@@ -5,6 +5,17 @@ This project deploys a small monitoring application with two services:
 - **Dashboard** — serves the metrics page using NGINX
 - **Collector** — provides system metrics through a Python Flask API
 
+## Table of contents
+
+- [Task 1 — Linux setup](#task-1--linux-setup)
+- [Task 2 — Docker basics, image management, networking & storage](#task-2--docker-basics-image-management-networking--storage)
+- [Task 3 — Dockerize the application](#task-3--dockerize-the-application)
+- [Task 4 — Docker compose](#task-4--docker-compose)
+- [Task 5 — Monitoring & troubleshooting](#task-5--monitoring--troubleshooting)
+- [Submission](#submission)
+- [Short questions](#short-questions)
+- [Bonus](#bonus)
+
 ## Task 1 — Linux setup
 
 The Linux environment was inspected using the following commands:
