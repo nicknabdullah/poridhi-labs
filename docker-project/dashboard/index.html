@@ -4,7 +4,431 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>System Metrics Dashboard</title>
-    <link rel="stylesheet" href="styles.css" />
+    <style>
+      /* Reset and Base */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
+          Arial, sans-serif;
+        background: linear-gradient(145deg, #0f0c29, #302b63, #24243e);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+        margin: 0;
+      }
+
+      /* Container */
+      .container {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-radius: 24px;
+        box-shadow:
+          0 25px 50px -12px rgba(0, 0, 0, 0.5),
+          inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        padding: 40px;
+        max-width: 1100px;
+        width: 100%;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        transition: all 0.3s ease;
+      }
+
+      /* Header */
+      header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 32px;
+        flex-wrap: wrap;
+        gap: 16px;
+      }
+
+      .header-left {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .logo svg {
+        filter: drop-shadow(0 0 10px rgba(102, 126, 234, 0.3));
+      }
+
+      h1 {
+        font-size: 26px;
+        font-weight: 700;
+        color: #ffffff;
+        letter-spacing: -0.5px;
+        background: linear-gradient(135deg, #ffffff 0%, #a0aec0 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin: 0;
+      }
+
+      .version {
+        font-size: 11px;
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.4);
+        background: rgba(255, 255, 255, 0.08);
+        padding: 4px 10px;
+        border-radius: 12px;
+        letter-spacing: 0.5px;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+      }
+
+      .header-right {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      /* Status Badge */
+      .status-badge {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: rgba(255, 255, 255, 0.06);
+        padding: 8px 16px;
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+      }
+
+      .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: #f56565;
+        display: inline-block;
+        transition: all 0.3s ease;
+      }
+
+      .dot.online {
+        background: #48bb78;
+        box-shadow: 0 0 12px rgba(72, 187, 120, 0.4);
+      }
+
+      .dot.offline {
+        background: #f56565;
+        box-shadow: 0 0 12px rgba(245, 101, 101, 0.4);
+      }
+
+      #statusText {
+        font-size: 13px;
+        font-weight: 500;
+        color: rgba(255, 255, 255, 0.8);
+      }
+
+      /* Refresh Button */
+      .refresh-btn {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 8px 20px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+      }
+
+      .refresh-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 25px rgba(102, 126, 234, 0.4);
+      }
+
+      .refresh-btn:active {
+        transform: translateY(0);
+      }
+
+      .refresh-btn svg {
+        transition: transform 0.6s ease;
+      }
+
+      .refresh-btn.spinning svg {
+        animation: spin 0.8s ease-in-out;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* Metrics Grid */
+      .metrics-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+        gap: 16px;
+        margin-bottom: 28px;
+      }
+
+      .metric-card {
+        background: rgba(255, 255, 255, 0.04);
+        padding: 20px;
+        border-radius: 16px;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        transition: all 0.3s ease;
+        animation: fadeIn 0.5s ease forwards;
+      }
+
+      .metric-card:nth-child(2) {
+        animation-delay: 0.1s;
+      }
+      .metric-card:nth-child(3) {
+        animation-delay: 0.2s;
+      }
+      .metric-card:nth-child(4) {
+        animation-delay: 0.3s;
+      }
+
+      .metric-card:hover {
+        background: rgba(255, 255, 255, 0.07);
+        transform: translateY(-2px);
+        border-color: rgba(102, 126, 234, 0.3);
+      }
+
+      .metric-icon {
+        font-size: 28px;
+        line-height: 1;
+        opacity: 0.9;
+      }
+
+      .metric-content {
+        flex: 1;
+      }
+
+      .metric-card h3 {
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.5);
+        margin-bottom: 4px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .metric-value {
+        font-size: 22px;
+        font-weight: 700;
+        color: #ffffff;
+        min-height: 32px;
+      }
+
+      .metric-value.online {
+        color: #48bb78;
+      }
+
+      .metric-value.offline {
+        color: #f56565;
+      }
+
+      /* API Section */
+      .api-section {
+        background: rgba(255, 255, 255, 0.04);
+        border-radius: 16px;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        overflow: hidden;
+      }
+
+      .api-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px 20px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+
+      .api-section h2 {
+        font-size: 16px;
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.9);
+        margin: 0;
+      }
+
+      .api-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .api-endpoint {
+        font-size: 12px;
+        font-weight: 600;
+        color: rgba(102, 126, 234, 0.8);
+        background: rgba(102, 126, 234, 0.1);
+        padding: 4px 12px;
+        border-radius: 12px;
+        font-family: "Courier New", monospace;
+      }
+
+      .copy-btn {
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        color: rgba(255, 255, 255, 0.6);
+        padding: 6px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+      }
+
+      .copy-btn:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: #ffffff;
+      }
+
+      .copy-btn.copied {
+        color: #48bb78;
+        border-color: #48bb78;
+      }
+
+      .api-response {
+        background: rgba(0, 0, 0, 0.3);
+        padding: 20px;
+        overflow-x: auto;
+        min-height: 100px;
+      }
+
+      .api-response pre {
+        color: #a0aec0;
+        font-family: "Courier New", Courier, monospace;
+        font-size: 13px;
+        line-height: 1.6;
+        margin: 0;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+      }
+
+      .api-response .json-key {
+        color: #f56565;
+      }
+
+      .api-response .json-string {
+        color: #48bb78;
+      }
+
+      .api-response .json-number {
+        color: #ed8936;
+      }
+
+      .api-response .json-boolean {
+        color: #667eea;
+      }
+
+      /* Footer */
+      footer {
+        margin-top: 28px;
+        text-align: center;
+      }
+
+      footer p {
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.25);
+        letter-spacing: 0.3px;
+        margin: 0;
+      }
+
+      /* Animations */
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .container {
+          padding: 24px;
+        }
+
+        header {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .header-right {
+          width: 100%;
+          justify-content: space-between;
+        }
+
+        h1 {
+          font-size: 20px;
+        }
+
+        .metrics-grid {
+          grid-template-columns: 1fr 1fr;
+          gap: 12px;
+        }
+
+        .metric-card {
+          padding: 16px;
+        }
+
+        .metric-value {
+          font-size: 18px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .container {
+          padding: 16px;
+        }
+
+        .metrics-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .header-right {
+          flex-wrap: wrap;
+        }
+
+        .refresh-btn {
+          width: 100%;
+          justify-content: center;
+        }
+
+        .api-header {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+      }
+    </style>
   </head>
   <body>
     <div class="container">
@@ -154,6 +578,151 @@
       </footer>
     </div>
 
-    <script src="script.js"></script>
+    <script>
+      // Configuration
+      const COLLECTOR_URL = "/status";
+      const REFRESH_INTERVAL = 5000;
+
+      // DOM Elements
+      const statusText = document.getElementById("statusText");
+      const statusDot = document.getElementById("statusDot");
+      const systemStatus = document.getElementById("systemStatus");
+      const uptime = document.getElementById("uptime");
+      const memory = document.getElementById("memory");
+      const disk = document.getElementById("disk");
+      const lastUpdate = document.getElementById("lastUpdate");
+      const apiResponse = document.getElementById("apiResponse");
+      const refreshBtn = document.getElementById("refreshBtn");
+      const copyBtn = document.getElementById("copyBtn");
+
+      // State
+      let isOnline = false;
+      let refreshTimer = null;
+
+      // Update status badge
+      function updateStatusBadge(online) {
+        isOnline = online;
+        if (online) {
+          statusText.textContent = "All Systems Online";
+          statusDot.className = "dot online";
+          systemStatus.textContent = "✅ Online";
+          systemStatus.className = "metric-value online";
+        } else {
+          statusText.textContent = "System Offline";
+          statusDot.className = "dot offline";
+          systemStatus.textContent = "⚠️ Offline";
+          systemStatus.className = "metric-value offline";
+        }
+      }
+
+      // Format JSON with syntax highlighting
+      function formatJson(json) {
+        try {
+          const obj = typeof json === "string" ? JSON.parse(json) : json;
+          const formatted = JSON.stringify(obj, null, 2);
+          return formatted.replace(
+            /("(?:[^"\\]|\\.)*"):\s*("(?:[^"\\]|\\.)*"|true|false|null|\d+)/g,
+            (match, key, value) => {
+              const isString = value.startsWith('"');
+              const isBoolean =
+                value === "true" || value === "false" || value === "null";
+              const isNumber = !isString && !isBoolean;
+
+              let valueClass = "json-string";
+              if (isBoolean) valueClass = "json-boolean";
+              else if (isNumber) valueClass = "json-number";
+
+              return `<span class="json-key">${key}</span>: <span class="${valueClass}">${value}</span>`;
+            },
+          );
+        } catch {
+          return json;
+        }
+      }
+
+      // Fetch metrics from collector
+      async function fetchMetrics() {
+        try {
+          const response = await fetch(COLLECTOR_URL);
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          const data = await response.json();
+
+          updateStatusBadge(true);
+          apiResponse.innerHTML = formatJson(data);
+          uptime.textContent = `${data.uptime_seconds} seconds`;
+          memory.textContent = `${data.memory_percent}%`;
+          disk.textContent = `${data.disk_percent}%`;
+          lastUpdate.textContent = new Date().toLocaleTimeString("en-US", {
+            hour12: false,
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+          });
+        } catch (error) {
+          console.error("Error fetching metrics:", error);
+          updateStatusBadge(false);
+          apiResponse.innerHTML =
+            "❌ Error: Could not connect to metrics collector\n\n" +
+            "Please ensure the collector service is running.\n" +
+            "Error: " +
+            error.message;
+          lastUpdate.textContent = "--";
+        }
+      }
+
+      // Refresh with animation
+      function refreshMetrics() {
+        refreshBtn.classList.add("spinning");
+        fetchMetrics().finally(() => {
+          setTimeout(() => {
+            refreshBtn.classList.remove("spinning");
+          }, 800);
+        });
+      }
+
+      // Copy API response to clipboard
+      async function copyResponse() {
+        const text = apiResponse.textContent || apiResponse.innerText;
+        try {
+          await navigator.clipboard.writeText(text);
+          copyBtn.classList.add("copied");
+          setTimeout(() => {
+            copyBtn.classList.remove("copied");
+          }, 2000);
+        } catch (err) {
+          console.error("Failed to copy:", err);
+          // Fallback for older browsers
+          const textarea = document.createElement("textarea");
+          textarea.value = text;
+          document.body.appendChild(textarea);
+          textarea.select();
+          document.execCommand("copy");
+          document.body.removeChild(textarea);
+          copyBtn.classList.add("copied");
+          setTimeout(() => {
+            copyBtn.classList.remove("copied");
+          }, 2000);
+        }
+      }
+
+      // Event Listeners
+      refreshBtn.addEventListener("click", refreshMetrics);
+      copyBtn.addEventListener("click", copyResponse);
+
+      // Initial fetch
+      fetchMetrics();
+
+      // Auto-refresh every 5 seconds
+      refreshTimer = setInterval(fetchMetrics, REFRESH_INTERVAL);
+
+      // Clean up on page unload
+      window.addEventListener("beforeunload", () => {
+        if (refreshTimer) {
+          clearInterval(refreshTimer);
+        }
+      });
+    </script>
   </body>
 </html>

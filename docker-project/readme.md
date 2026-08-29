@@ -57,16 +57,14 @@ Both services use the `app-net` network, allowing NGINX to reach the collector b
 
 | Service component | Base image | Exposed / mapped ports | Status | Key features / configuration |
 |---|---|---|---|---|
-| **Dashboard** | `nginx:alpine` | Host `9090` → Container `80` | ✅ Dockerized | Serves `index.html`, `styles.css`, `script.js` & proxy config |
+| **Dashboard** | `nginx:alpine` | Host `9090` → Container `80` | ✅ Dockerized | Serves `index.html` & proxy config |
 | **Collector** | `python:3.12-slim` | Container `6000` (Internal) | ✅ Dockerized | Runs Flask API (`app.py`), dependencies in `requirements.txt` |
 
 ### Dashboard details
 
 The dashboard uses NGINX and serves:
 
-- `index.html`
-- `styles.css`
-- `script.js`
+- `index.html` (combining HTML structure, inline CSS styles, and JavaScript logic)
 
 Its Dockerfile uses the `nginx:alpine` image and copies the dashboard files into `/usr/share/nginx/html`.
 
@@ -169,7 +167,7 @@ http://127.0.0.1:9090
 
 ### Problem & resolution
 
-| # | Problem identified | Status | Solution / fix |
+|  | Problem identified | Status | Solution / fix |
 |---|---|---|---|
 | 1 | Port `6000` blocked as `ERR_UNSAFE_PORT` by browsers | ✅ Resolved | Configured NGINX reverse proxy to route `/status` |
 | 2 | Cross-Origin Request Blocked between origins | ✅ Resolved | Unified requests under same origin via NGINX proxy |
@@ -229,10 +227,10 @@ Browser -> dashboard:9090 -> NGINX -> collector:6000/status -> Flask JSON
 
 ### File structure & deliverables
 
-| Deliverable / artifact | Path / location | Status | Description |
+| Deliverable | Path | Status | Description |
 |---|---|---|---|
 | **Docker compose file** | `compose.yaml` | ✅ Delivered | Orchestration configuration for all services |
-| **Dashboard frontend** | `dashboard/` | ✅ Delivered | Includes `Dockerfile`, `index.html`, `script.js`, `styles.css`, `nginx.conf` |
+| **Dashboard frontend** | `dashboard/` | ✅ Delivered | Includes `Dockerfile`, `index.html`, `nginx.conf` |
 | **Collector backend** | `collector/` | ✅ Delivered | Includes `Dockerfile`, `app.py`, `requirements.txt` |
 | **Verification screenshots**| `/screenshots` | ✅ Delivered | Includes dashboard UI, compose state, images, networks, volumes |
 
@@ -242,9 +240,7 @@ docker-project/
 ├── dashboard/
 │   ├── Dockerfile
 │   ├── index.html
-│   ├── nginx.conf
-│   ├── script.js
-│   └── styles.css
+│   └── nginx.conf
 └── collector/
       ├── Dockerfile
       ├── app.py
@@ -263,7 +259,7 @@ They include the working dashboard, Compose services, Docker images, Docker netw
 
 ## Short questions
 
-| # | Question | Answer / explanation |
+|  | Question | Answer |
 |---|---|---|
 | 1 | **What is the difference between a Docker image and a container?** | An **image** is a packaged, read-only template containing application code and dependencies. A **container** is a running instance created from an image. |
 | 2 | **What does `9090:80` mean?** | Maps host port `9090` to container port `80` (`host:9090 -> container:80`). |
