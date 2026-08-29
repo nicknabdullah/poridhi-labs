@@ -1,5 +1,4 @@
 from flask import Flask
-from flask_cors import CORS
 import os
 import shutil
 import time
@@ -9,19 +8,6 @@ app = Flask(__name__)
 
 # store the process start time so the API can calculate its uptime
 START_TIME = time.time()
-
-# allow the local dashboard development server to read the API response
-CORS(
-    app,
-    resources={
-        r"/status": {
-            "origins": [
-                "http://127.0.0.1:3001",
-                "http://localhost:3001",
-            ]
-        }
-    },
-)
 
 # define the /status API endpoint
 @app.route("/status")
